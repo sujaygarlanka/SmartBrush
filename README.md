@@ -1,7 +1,7 @@
 ### SmartBrush
 
 UI
-———————————————————
+------
 React Native Paper
 https://callstack.github.io/react-native-paper/getting-started.html
 
@@ -10,14 +10,14 @@ https://github.com/galio-org/galio
 https://github.com/galio-org/galio-starter-kit
 
 Authentication 
-———————————————————
+------
 Google Sign In
 https://www.npmjs.com/package/react-native-google-signin
 https://aboutreact.com/example-of-google-sign-in-in-react-native/
 
 
 React Native - Tutorials
-———————————————————
+------
 App Organization
 https://medium.com/the-react-native-log/organizing-a-react-native-project-9514dfadaa0
 
