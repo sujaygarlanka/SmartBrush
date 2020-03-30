@@ -28,6 +28,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.270217226325-7n7dapev6bn7rch487rq2ecroicm1gdu</string>
+            <string>fb1163115277140426</string>
 			</array>
 		</dict>
 	</array>
@@ -83,5 +84,9 @@
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
 	</array>
+  <key>FacebookAppID</key>
+  <string>1163115277140426</string>
+  <key>FacebookDisplayName</key>
+  <string>Smart Dashboard</string>
 </dict>
 </plist>

@@ -1,69 +1,98 @@
 /**
- * Sample React Native App
+ * Smart Brush
  * https://github.com/facebook/react-native
  *
  * @format
  * @flow
  */
 
-import React, { Component } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import { MaterialCommunityIcons } from 'react-native-vector-icons';
-import SignIn from "./pages/Sign-In";
-import Home from "./pages/Home";
-import Profile from "./pages/Profile";
-import Header from "./pages/Header";
+import React, {Component} from 'react';
+import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {connect} from 'react-redux';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import theme from './constants/theme';
+import Login from './screens/Login';
+import Home from './screens/Home';
+import Profile from './screens/Profile';
 
-const Tab = createMaterialBottomTabNavigator();
+const Tab = createBottomTabNavigator();
+const Auth = createStackNavigator();
 
-export default class SmartBrush extends Component {
+const reactNavigationTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: theme.COLORS.WHITE,
+  },
+};
+
+function App() {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen
+        name="Home"
+        component={Home}
+        options={{
+          tabBarIcon: ({color, size}) => (
+            <AntDesign name="home" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          tabBarLabel: 'Profile',
+          tabBarIcon: ({color, size}) => (
+            <AntDesign name="user" color={color} size={size} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+}
+
+class SmartBrush extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      userInfo: null,
-      loggedIn: false
-    };
-  }
-
-  getUserInfo = async () => {
-    return this.state.userInfo;
-  }
-
-  logIn = async (userInfo) => {
-    this.setState({userInfo: userInfo, loggedIn: true});
-  }
-
-  logOut = async => {
-    this.setState({userInfo: null, loggedIn: false});
   }
 
   render() {
-    if (this.state.loggedIn) {
-      return (
-          <NavigationContainer>
-            <Header logOut = {this.logOut.bind(this)}/>
-            <Tab.Navigator initialRouteName="Home" >
-              <Tab.Screen name="Home" component={Home} userInfo = {this.state.userInfo}/>
-              <Tab.Screen 
-                name="Profile" 
-                component={Profile} 
-                userInfo = {this.state.userInfo} 
-                options={{
-                    tabBarLabel: 'Profile',
-                    tabBarIcon: ({ color, size }) => (
-                    <MaterialCommunityIcons name="test" color={color} size={size} />
-                    ),
-                }}
-                />
-            </Tab.Navigator>
-          </NavigationContainer>
-      );
-    }
-    else {
-      return (
-        <SignIn loggedIn = {this.state.loggedIn} logIn = {this.logIn.bind(this)}/>
-      );
-    } 
+    return (
+      <NavigationContainer theme={reactNavigationTheme}>
+        <Auth.Navigator
+          screenOptions={{
+            headerTitle: '',
+            headerStyle: {
+              backgroundColor: theme.COLORS.WHITE,
+              shadowColor: theme.COLORS.TRANSPARENT,
+              shadowRadius: 0,
+              shadowOffset: {
+                  height: 0,
+              }
+            },
+            headerTitleStyle: {
+              fontWeight: 'normal',
+            },
+          }}>
+          {this.props.user ? (
+            <Auth.Screen name="App Name" component={App} />
+          ) : (
+            <Auth.Screen name="Login" component={Login} />
+          )}
+        </Auth.Navigator>
+      </NavigationContainer>
+    );
   }
 }
+
+function mapStateToProps(state) {
+  return {
+    user: state.user,
+  };
+}
+
+export default connect(mapStateToProps)(SmartBrush);
