@@ -7,11 +7,10 @@ import {
   ScrollView,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {signUp, googleSignIn} from '../actions/auth-actions';
+import {signUp, googleSignIn, facebookSignIn} from '../actions/auth-actions';
 import {Block, Button, Input, Text, Icon} from 'galio-framework';
 import theme from '../constants/theme';
 import Title from '../components/Title';
-import { Divider } from 'react-native-paper';
 
 const {width} = Dimensions.get('window');
 
@@ -28,8 +27,6 @@ class Login extends React.Component {
     user[key] = value;
     this.setState({user});
   };
-
-  handleOnFacebook = () => Alert.alert('Halfway there!', 'Imported and basic connection working, but need to make a few more calls to get profile data from API.');
 
   render() {
     return (
@@ -66,7 +63,7 @@ class Login extends React.Component {
                   color={theme.COLORS.FACEBOOK}
                   shadowColor={theme.COLORS.FACEBOOK}
                   style={styles.button}
-                  onPress={() => this.handleOnFacebook()}>
+                  onPress={() => this.props.facebookSignIn()}>
                     <Icon
                     size={SOCIAL_ICON_SIZE}
                     name="facebook"
@@ -134,6 +131,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     googleSignIn: () => dispatch(googleSignIn()),
+    facebookSignIn: () => dispatch(facebookSignIn()),
     signUp: user => dispatch(signUp(user)),
   };
 }

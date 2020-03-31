@@ -2,6 +2,7 @@ import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
 const FBSDK = require('react-native-fbsdk');
 const {
   LoginManager,
+  AccessToken
 } = FBSDK;
 
 GoogleSignin.configure({
@@ -20,8 +21,8 @@ export const googleSignIn = function() {
         //Always resolves to true on iOS.
         showPlayServicesUpdateDialog: true,
       });
-      const userInfo = await GoogleSignin.signIn();
-      console.log(userInfo);
+      let userInfo = await GoogleSignin.signIn();
+      userInfo.user.authProvider = 'GOOGLE';
       dispatch({type: 'SET_USER', payload: userInfo.user});
     } catch (error) {
       console.log('Message', error.message);
@@ -44,8 +45,20 @@ export const facebookSignIn = function() {
       try {
         dispatch({type: 'IS_LOADING'});
         await LoginManager.logInWithPermissions(['public_profile']);
-        console.log(userInfo);
-        dispatch({type: 'SET_USER', payload: userInfo});
+        let accessToken = await AccessToken.getCurrentAccessToken();
+        let userInfo = await fetch(`https://graph.facebook.com/v6.0/me?fields=email,first_name,last_name,picture&access_token=${accessToken.accessToken}`);
+        userInfo = await userInfo.json();
+        // console.log(userInfo)
+        // let picture = await fetch(`https://graph.facebook.com/v6.0/me/picture&access_token=${accessToken.accessToken}`);
+        // console.log(picture)
+        let user = {
+          givenName: userInfo.first_name,
+          familyName: userInfo.last_name,
+          email: userInfo.email,
+          photo: userInfo.picture.data.url,
+          authProvider: 'FACEBOOK'
+        };
+        dispatch({type: 'SET_USER', payload: user});
       } catch (error) {
         console.log(error);
         dispatch({type: 'AUTH_FAILURE', payload: error});
@@ -55,10 +68,24 @@ export const facebookSignIn = function() {
 
 export const signOut = function() {
     return async (dispatch, getState) => {
+      let user = getState().user;
       dispatch({type: 'IS_LOADING'});
+      console.log(user)
       try {
-        await GoogleSignin.revokeAccess();
-        await GoogleSignin.signOut();
+        if (user.authProvider == 'GOOGLE'){
+          await GoogleSignin.revokeAccess();
+          await GoogleSignin.signOut();
+        }
+        else if  (user.authProvider == 'FACEBOOK'){
+          let accessToken = await AccessToken.getCurrentAccessToken();
+          // let userId = AccessToken.getUserId();
+          // Log out doesn't quite work
+          let response = await fetch(`https://graph.facebook.com/v2.5/me?access_token=${accessToken.accessToken}`, {
+            method: 'delete'
+          })
+          console.log(response)
+          await LoginManager.logOut();
+        }
         dispatch({type: 'SET_USER', payload: null});
       } catch (error) {
         console.error(error);
