@@ -79,9 +79,13 @@ class SmartBrush extends Component {
             },
           }}>
           {this.props.user ? (
-            <Auth.Screen name="App Name" component={App} />
+            <Auth.Screen name="App Name" component={App}/>
           ) : (
-            <Auth.Screen name="Login" component={Login} />
+            <Auth.Screen name="Login" component={Login} options = {{
+              // When logging out, a pop animation feels intuitive
+              // You can remove this if you want the default 'push' animation
+              animationTypeForReplace: 'pop',
+            }}/>
           )}
         </Auth.Navigator>
       </NavigationContainer>

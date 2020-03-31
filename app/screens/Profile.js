@@ -1,16 +1,20 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Image} from 'react-native';
-import {Button, Text, Input,  Block} from 'galio-framework';
+import {Button, Text, Input, Block} from 'galio-framework';
 import {connect} from 'react-redux';
 import {signOut} from '../actions/auth-actions';
 import theme from '../constants/theme';
 import Title from '../components/Title';
 
 class Profile extends Component {
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps.user != null;
+  }
+
   render() {
     return (
       <Block flex>
-        <Title title="Login" />
+        <Title title="Profile" />
         <Block flex center>
           <Image
             source={{
@@ -26,7 +30,7 @@ class Profile extends Component {
             color={theme.COLORS.TRANSPARENT}
             style={styles.profileInfoFields}>
             <Text center color={theme.COLORS.MUTED}>
-              {this.props.user.givenName + " " + this.props.user.familyName}
+              {this.props.user.givenName + ' ' + this.props.user.familyName}
             </Text>
           </Button>
           <Button
@@ -40,7 +44,11 @@ class Profile extends Component {
           </Button>
         </Block>
         <Block flex center middle>
-          <Button color={theme.COLORS.PRIMARY} shadowColor={theme.COLORS.PRIMARY} round onPress={() => this.props.signOut()}>
+          <Button
+            color={theme.COLORS.PRIMARY}
+            shadowColor={theme.COLORS.PRIMARY}
+            round
+            onPress={() => this.props.signOut()}>
             Sign Out
           </Button>
         </Block>
